@@ -1,15 +1,31 @@
-apply plugin: 'java'
+apply plugin: "java"
 
-sourceCompatibility = '1.6'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-ext {
-  gdxVersion = '1.7.1'
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+  withJavadocJar()
 }
 
-repositories {
-  mavenCentral()
+jar {
+  manifest {
+    attributes 'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+  }
 }
 
-dependencies {
+tasks.withType(JavaCompile) {
+  options.compilerArgs << '-Xlint:unchecked'
+  options.deprecation = true
+  options.encoding = 'UTF-8'
+}
+
+javadoc {
+  if(JavaVersion.current().isJava9Compatible()) {
+    options.addBooleanOption('html5', true)
+  }
+}
+
+task sourcesJar(type: Jar) {
+  archiveClassifier.set('sources')
+  from sourceSets.main.allSource
 }
